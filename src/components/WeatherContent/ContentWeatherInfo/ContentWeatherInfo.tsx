@@ -13,7 +13,7 @@ const ContentWeatherInfo: FC = () => {
     
     return (
         <>
-            {weatherData && <Col span={6} className={styles.container}>
+            {weatherData && <Col xl={7} md={12} sm={22} xs={22}  className={styles.container}>
                 <img className={styles.iconImages}
                      src={weatherData.weather.icon ? iconWeather : imgServerProblem}
                      alt={'imgServerProblem'}/>

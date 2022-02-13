@@ -5,9 +5,9 @@ import {ContentWeatherInfo} from "./ContentWeatherInfo"
 
 const WeatherContent: FC = () => {
     return (
-        <Row justify={'center'} >
-            <ContentTable/>
+        <Row justify={'space-around'} >
             <ContentWeatherInfo/>
+            <ContentTable/>
         </Row>
     )
 }

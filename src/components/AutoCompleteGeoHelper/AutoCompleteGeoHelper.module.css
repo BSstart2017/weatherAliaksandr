@@ -6,3 +6,11 @@
    color: red;
     margin-left: 10px;
 }
+
+.containerPositionEnd {
+    text-align: end;
+}
+
+.containerPositionCenter {
+    text-align: center;
+}

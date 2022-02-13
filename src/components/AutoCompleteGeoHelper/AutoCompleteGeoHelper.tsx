@@ -1,5 +1,5 @@
 import React, {FC, useCallback, useEffect, useState} from "react"
-import {AutoComplete, Button, Col, Row} from "antd"
+import {AutoComplete, Button, Col} from "antd"
 import {
     actions,
     getHelperCityThunk,
@@ -11,6 +11,8 @@ import {getHelperCityResult, getIsErrorCity, getWeatherData} from "../../redux/S
 import styles from "./AutoCompleteGeoHelper.module.css"
 
 const AutoCompleteGeoHelper: FC = () => {
+
+    const delay = 600000 //5 min
 
     const dispatch = useDispatch()
 
@@ -45,45 +47,48 @@ const AutoCompleteGeoHelper: FC = () => {
 
 
     useEffect(() => {
-        if (weatherData && weatherInterval === null) {
+        if (!weatherData){
+            return
+        }
+        if (weatherInterval === null) {
             setWeatherInterval(setInterval(() =>
-                dispatch(getWeatherBitCityIntervalThunk(weatherData.city_name)), 600000)
+                dispatch(getWeatherBitCityIntervalThunk(weatherData.city_name)), delay)
             )
-        } else if (weatherData && weatherInterval !== null) {
+        } else {
             clearInterval(weatherInterval)
             setWeatherInterval(setInterval(() =>
-                dispatch(getWeatherBitCityIntervalThunk(weatherData.city_name)), 600000)
+                dispatch(getWeatherBitCityIntervalThunk(weatherData.city_name)), delay)
             )
         }
     }, [dispatch, weatherData])
 
     return (
-        <Row gutter={[16, 16]} align={"middle"}>
-            <Col>
-                <span>RADAR Geo Helper</span>
-            </Col>
-            <Col>
-                <AutoComplete
-                    autoFocus={true}
-                    value={helperCityName}
-                    onClick={handlerClickAutoComplete}
-                    className={styles.autoComplete}
-                    options={helperCityResult}
-                    onSelect={handlerSelectCity}
-                    onSearch={handlerSearchCity}
-                    onChange={handlerChangeCity}
-                    placeholder="Enter the name of the city"
-                />
-                {isErrorCity &&
-                    <span className={styles.errorMessage} >No city found!!</span>
-                }
-            </Col>
-            <Col>
-                <Button type={"primary"} disabled={helperCityName.length === 0} onClick={handlerClickSearch}>
-                    Search
-                </Button>
-            </Col>
-        </Row>
+       <>
+           <Col xl={4} md={8} sm={8} xs={0} className={styles.containerPositionEnd}>
+               <span>RADAR Geo Helper</span>
+           </Col>
+           <Col xl={5} md={8} sm={12} xs={16} className={styles.containerPositionCenter}>
+               <AutoComplete
+                   autoFocus={true}
+                   value={helperCityName}
+                   onClick={handlerClickAutoComplete}
+                   className={styles.autoComplete}
+                   options={helperCityResult}
+                   onSelect={handlerSelectCity}
+                   onSearch={handlerSearchCity}
+                   onChange={handlerChangeCity}
+                   placeholder="Enter the name of the city"
+               />
+               {isErrorCity &&
+                   <span className={styles.errorMessage} >No city found!!</span>
+               }
+           </Col>
+           <Col xl={11} md={4} sm={4} xs={8} >
+               <Button type={"primary"} disabled={helperCityName.length === 0} onClick={handlerClickSearch}>
+                   Search
+               </Button>
+           </Col>
+       </>
     )
 }
 

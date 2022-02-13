@@ -10,8 +10,7 @@ const ContentTable: FC = () => {
 
     const columns = [
         {title: 'City', dataIndex: 'city_name'},
-        {title: 'Temperature', dataIndex: 'temp'},
-        {title: 'Region', dataIndex: 'timezone'},
+        {title: 'Temp', dataIndex: 'temp'},
         {title: 'Date', dataIndex: 'ob_time'},
         {
             title: 'Action',
@@ -37,9 +36,11 @@ const ContentTable: FC = () => {
 
     return (
         <>
-            { weatherSeniorData && <Col span={12} className={styles.container}>
+            { weatherSeniorData &&
+                <Col xl={10} md={18} sm={22} xs={24} >
                 <Divider orientation="center" className={styles.divider}>Request History</Divider>
                 <Table
+                    className={styles.tableStyle}
                     loading={!weatherSeniorData}
                     rowKey={record => record.key}
                     rowSelection={{

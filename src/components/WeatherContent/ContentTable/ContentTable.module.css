@@ -5,3 +5,7 @@
 .container .divider {
     color: yellow;
 }
+
+.tableStyle {
+    min-width: 375px;
+}

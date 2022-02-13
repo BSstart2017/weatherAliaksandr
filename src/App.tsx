@@ -2,7 +2,7 @@ import React, {FC, useEffect, useRef} from "react"
 import {useDispatch, useSelector} from "react-redux"
 import {actions, getWeatherLatLonThunk} from "./redux/WeatherBitReducer"
 import {getIsLoading, getWeatherSeniorData} from "./redux/Selectors/WeatherBitSelector"
-import {Layout, Row} from "antd"
+import {Col, Layout, Row} from "antd"
 import {AutoCompleteGeoHelper} from "./components/AutoCompleteGeoHelper"
 import {WeatherContent} from "./components/WeatherContent"
 import {WeatherBackground} from "./components/WeatherBackground"
@@ -42,9 +42,11 @@ const App: FC = () => {
             <WeatherBackground/>
             {!isLoading
                 ?  <Layout className={styles.containerLayout}>
-                        <Row className={styles.containerHeader} justify={'space-around'}  align={"middle"}>
-                            <span>WEATHER APP</span>
+                        <Row className={styles.containerHeader}  align={"middle"}>
                             <AutoCompleteGeoHelper/>
+                            <Col xl={4} md={0} sm={0} xs={0} className={styles.containerPositionCenter}>
+                                <span>WEATHER APP</span>
+                            </Col>
                         </Row>
                         <WeatherContent/>
                     </Layout>
