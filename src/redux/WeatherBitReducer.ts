@@ -1,7 +1,7 @@
 import {BaseThunkType, InferActionType} from "./store"
-import weatherBitApi, {WeatherBitCityDataType} from "../api/WeatherbitApi"
-import geoHelperApi, {HelperCityType} from "../api/GeohelperApi"
-import {PositionType} from "../utils/geo";
+import weatherBitApi, {WeatherBitCityDataType} from "../api/WeatherBitApi"
+import geoHelperApi, {HelperCityType} from "../api/GeoHelperApi"
+import {PositionType} from "../utils/geo"
 
 
 let defaultState = {
@@ -52,7 +52,7 @@ let defaultState = {
     isErrorCity : false
 }
 
-const weatherBitReducer = (state = defaultState, action: ActionType) : defaultStateType => {
+const weatherBitReducer = (state = defaultState, action: ActionType) : DefaultStateType => {
   switch (action.type){
     case "weatherBit/Aliaksandr_Andreyeu/WEATHER_BIT_SUCCESS":
       return {
@@ -149,6 +149,7 @@ export const getWeatherLatLonThunk = (curLoc: PositionType): ThunkType => async 
 export const getHelperCityThunk = (city:string): ThunkType => async (dispatch, getState) => {
     try {
         const response = await geoHelperApi.getHelperCity(city)
+        console.log(response)
         dispatch(actions.setHelperCityData(response))
     } catch (err: any) {
         console.log(err)
@@ -157,11 +158,11 @@ export const getHelperCityThunk = (city:string): ThunkType => async (dispatch, g
 
 export default weatherBitReducer
 
-export type defaultStateType = typeof defaultState
+export type DefaultStateType = typeof defaultState
 type ActionType = InferActionType<typeof actions>
 type ThunkType = BaseThunkType<ActionType>
 
-type imgWeatherBackgroundType = {
+export type imgWeatherBackgroundType = {
     code: number
     img: string
 }

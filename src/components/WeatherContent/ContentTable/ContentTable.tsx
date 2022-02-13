@@ -1,6 +1,6 @@
 import React, {FC, useCallback} from "react"
 import {Button, Col, Divider, Table} from "antd"
-import {WeatherBitCityDataType} from "../../../api/WeatherbitApi"
+import {WeatherBitCityDataType} from "../../../api/WeatherBitApi"
 import {actions} from "../../../redux/WeatherBitReducer"
 import {useDispatch, useSelector} from "react-redux"
 import {getWeatherSeniorData} from "../../../redux/Selectors/WeatherBitSelector"
