@@ -1,0 +1,16 @@
+.container {
+    width: 100vw;
+    height: 100vh;
+}
+
+.container .containerLayout {
+    position: absolute;
+    top: 10%;
+    width: 100%;
+    background-color: unset;
+}
+
+.container .containerLayout .containerHeader {
+    margin-bottom: 50px;
+    color: white;
+}

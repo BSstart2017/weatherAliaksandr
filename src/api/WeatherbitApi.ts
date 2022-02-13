@@ -1,4 +1,6 @@
 import axios from "axios";
+import { v1 as uu1 } from 'uuid'
+import {PositionType} from "../utils/geo";
 
 const API_KEY = process.env.REACT_APP_WEATHER_BIT_API_KEY
 
@@ -11,8 +13,13 @@ const weatherBitApi = {
   getWeatherCity(city:string) {
     return instance
       .get<WeatherBitCityType>(`?key=${API_KEY}&city=${city}`)
-      .then((response) => response.data.data[0])
+      .then((response) =>({...response.data.data[0], key:uu1()}) )
   },
+    getWeatherLatLon(curLoc:PositionType) {
+        return instance
+            .get<WeatherBitCityType>(`?key=${API_KEY}&lat=${curLoc.lat}&lon=${curLoc.lng}`)
+            .then((response) =>({...response.data.data[0], key:uu1()}) )
+    },
 }
 
 export default weatherBitApi
@@ -24,6 +31,7 @@ export type WeatherBitCityType = {
 }
 
 export type WeatherBitCityDataType = {
+    key: string
     app_temp: number
     aqi: number
     city_name: string

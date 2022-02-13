@@ -1,6 +1,8 @@
 import {BaseThunkType, InferActionType} from "./store"
-import weatherBitApi, {WeatherBitCityDataType} from "../api/WeatherbitApi";
-import geoHelperApi, {HelperCityType} from "../api/GeohelperApi";
+import weatherBitApi, {WeatherBitCityDataType} from "../api/WeatherbitApi"
+import geoHelperApi, {HelperCityType} from "../api/GeohelperApi"
+import {PositionType} from "../utils/geo";
+
 
 let defaultState = {
     weatherData : null as null | WeatherBitCityDataType,
@@ -45,39 +47,102 @@ let defaultState = {
         {code: 804, img: `${process.env.PUBLIC_URL}/assets/images/BrokenClouds.jpg` },
         {code: 900, img: `${process.env.PUBLIC_URL}/assets/images/ShowerRain.jpg` },
     ] as Array<imgWeatherBackgroundType>,
-    helperCityData : null as null | HelperCityType
+    helperCityData : null as null | HelperCityType,
+    isLoading : false,
+    isErrorCity : false
 }
 
 const weatherBitReducer = (state = defaultState, action: ActionType) : defaultStateType => {
   switch (action.type){
-    case "weatherBit/Aliaksandr_Andreyeu/WEATHER_BIT_SUCCESS" :
-      return {...state,
-          weatherData: action.data}
-      case "weatherBit/Aliaksandr_Andreyeu/WEATHER_BIT_SENIOR_SUCCESS" :
-      return {...state,
-          weatherSeniorData: state.weatherSeniorData ? [...action.data, ...state.weatherSeniorData] : action.data}
-      //todo: uuid create
-    case "weatherBit/Aliaksandr_Andreyeu/HELPER_CITY_SUCCESS" :
-      return {...state,
-          helperCityData: action.data}
+    case "weatherBit/Aliaksandr_Andreyeu/WEATHER_BIT_SUCCESS":
+      return {
+          ...state,
+          weatherData: action.data
+      }
+      case "weatherBit/Aliaksandr_Andreyeu/WEATHER_BIT_SENIOR_SUCCESS":
+      return {
+          ...state,
+          weatherSeniorData: state.weatherSeniorData ? [...action.data, ...state.weatherSeniorData] : action.data
+      }
+      case "weatherBit/Aliaksandr_Andreyeu/WEATHER_BIT_SENIOR_DELETE_SUCCESS":
+          return {
+              ...state,
+              weatherSeniorData: state.weatherSeniorData
+                  ? [...state.weatherSeniorData.filter((item)=> item.key !== action.data.key)]
+                  : []
+          }
+    case "weatherBit/Aliaksandr_Andreyeu/HELPER_CITY_SUCCESS":
+      return {
+          ...state,
+          helperCityData: action.data
+      }
+      case "weatherBit/Aliaksandr_Andreyeu/IS_LOADING_SUCCESS":
+          return {
+              ...state,
+              isLoading: action.isLoading
+          }
+      case "weatherBit/Aliaksandr_Andreyeu/IS_ERROR_CITY_SUCCESS":
+          return {
+              ...state,
+              isErrorCity: action.isErrorCity
+          }
     default:
       return state
   }
 }
 
 export const actions = {
-   setWeatherData: (data: WeatherBitCityDataType) => ({type : 'weatherBit/Aliaksandr_Andreyeu/WEATHER_BIT_SUCCESS', data} as const),
-   setWeatherSeniorData: (data: Array<WeatherBitCityDataType>) => ({type : 'weatherBit/Aliaksandr_Andreyeu/WEATHER_BIT_SENIOR_SUCCESS', data} as const),
-   setHelperCityData: (data: HelperCityType) => ({type : 'weatherBit/Aliaksandr_Andreyeu/HELPER_CITY_SUCCESS', data} as const)
+   setWeatherData: (data: WeatherBitCityDataType) => (
+       {type : 'weatherBit/Aliaksandr_Andreyeu/WEATHER_BIT_SUCCESS', data} as const
+   ),
+   setWeatherSeniorData: (data: Array<WeatherBitCityDataType>) => (
+       {type : 'weatherBit/Aliaksandr_Andreyeu/WEATHER_BIT_SENIOR_SUCCESS', data} as const
+   ),
+   setHelperCityData: (data: HelperCityType) => (
+       {type : 'weatherBit/Aliaksandr_Andreyeu/HELPER_CITY_SUCCESS', data} as const
+   ),
+    setDeleteWeatherSeniorData: (data: WeatherBitCityDataType) => (
+        {type : 'weatherBit/Aliaksandr_Andreyeu/WEATHER_BIT_SENIOR_DELETE_SUCCESS', data} as const
+    ),
+    setIsLoading: (isLoading: boolean) => (
+        {type : 'weatherBit/Aliaksandr_Andreyeu/IS_LOADING_SUCCESS', isLoading} as const
+    ),
+    setIsErrorCity: (isErrorCity: boolean) => (
+        {type : 'weatherBit/Aliaksandr_Andreyeu/IS_ERROR_CITY_SUCCESS', isErrorCity} as const
+    )
 }
 
-export const getWeatherBitCityThunk = (city: string): ThunkType => async (dispatch, getState) => {
+export const getWeatherBitCityThunk = (city: string): ThunkType => async (dispatch) => {
     try {
         const response = await weatherBitApi.getWeatherCity(city)
         dispatch(actions.setWeatherData(response))
         dispatch(actions.setWeatherSeniorData([response]))
     } catch (err: any) {
         console.log(err)
+        dispatch(actions.setIsErrorCity(true))
+    }
+}
+
+export const getWeatherBitCityIntervalThunk = (city: string): ThunkType => async (dispatch) => {
+    try {
+        const response = await weatherBitApi.getWeatherCity(city)
+        dispatch(actions.setWeatherData(response))
+    } catch (err: any) {
+        console.log(err)
+    }
+}
+
+
+export const getWeatherLatLonThunk = (curLoc: PositionType): ThunkType => async (dispatch) => {
+    try {
+        dispatch(actions.setIsLoading(true))
+        const response = await weatherBitApi.getWeatherLatLon(curLoc)
+        dispatch(actions.setWeatherData(response))
+        dispatch(actions.setWeatherSeniorData([response]))
+    } catch (err: any) {
+        console.log(err)
+    } finally {
+        dispatch(actions.setIsLoading(false))
     }
 }
 
@@ -90,8 +155,7 @@ export const getHelperCityThunk = (city:string): ThunkType => async (dispatch, g
     }
 }
 
-
-export default weatherBitReducer;
+export default weatherBitReducer
 
 export type defaultStateType = typeof defaultState
 type ActionType = InferActionType<typeof actions>
